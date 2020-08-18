@@ -30,22 +30,37 @@
         $(canvas).attr("height", GAME_SETTINGS.HEIGHT);
         document.body.appendChild(canvas);
       });
+
+      var tempstatusArray;
+      var tempfeedArray;
+
+
       socket.on('update', function(idArray, statusArray, feedArray){
+        tempstatusArray = statusArray;
+        tempfeedArray = feedArray;
+        if(GAME_SETTINGS == null) return;
+    
+      });
+
+      socket.on('update2', function(idArray, childArray){
         if(GAME_SETTINGS == null) return;
         drawBackground();
         idArray.forEach(function(id,i,a){
+          ctx.fillStyle = tempstatusArray[id].color;
+          ctx.fillRect(tempstatusArray[id].x,tempstatusArray[id].y,tempstatusArray[id].width,tempstatusArray[id].height);
 
-            ctx.fillStyle = statusArray[id].color;
-            ctx.fillRect(statusArray[id].x,statusArray[id].y,statusArray[id].width,statusArray[id].height);
+            childArray[id].forEach((item, i) => {
+              ctx.fillStyle = item.status.color;
+              ctx.fillRect(item.status.x,item.status.y,item.status.width,item.status.height);
+            });
 
         });
 
-        feedArray.forEach(function(item,i,a){
+        tempfeedArray.forEach(function(item,i,a){
             ctx.fillStyle = item.status.color;
             ctx.fillRect(item.status.x,item.status.y,item.status.width,item.status.height);
         });
-
-      });
+      })
 
       function drawBackground(){
         ctx.fillStyle = GAME_SETTINGS.BACKGROUND_COLOR;
